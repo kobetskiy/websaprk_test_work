@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:webspark_test_work/features/loading_screen/screens/loading_screen.dart';
+import 'package:webspark_test_work/features/loading_screen/view/loading_screen.dart';
 import 'package:webspark_test_work/features/models/static_values.dart';
 
 class MainScreen extends StatefulWidget {
@@ -10,10 +10,10 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final urlTextController = TextEditingController();
+  final urlTextController = TextEditingController(text: Constants.url);
 
   void startCountingProcess() {
-    if (urlTextController.text != StaticValues.url) {
+    if (urlTextController.text != Constants.url) {
       showDialog(
         context: context,
         builder: (context) => const AlertDialog(
@@ -31,24 +31,21 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home screen'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: const Text('Home screen')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('Set valid API base URL in order to continue'),
+            const SizedBox(height: 20),
             TextField(
               controller: urlTextController,
-              autofocus: true,
-              decoration: InputDecoration(
-                prefix: IconButton(
-                  onPressed: () => urlTextController.text = StaticValues.url,
-                  icon: const Icon(Icons.link, size: 16),
-                ),
+              decoration: const InputDecoration(
+                labelText: "API URL",
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(horizontal: 20),
+
               ),
             )
           ],
