@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'features/main_screen/screens/main_screen.dart';
+
 void main() {
   runApp(const MainApp());
 }
@@ -9,12 +11,26 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+            backgroundColor: const WidgetStatePropertyAll(Colors.blue),
+            foregroundColor: const WidgetStatePropertyAll(Colors.white),
+          ),
         ),
       ),
+      home: const MainScreen(),
     );
   }
 }
