@@ -59,14 +59,12 @@ class PointGridView extends StatelessWidget {
       color: color,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 2),
+          border: Border.all(color: Colors.black, width: 1),
         ),
         child: Center(
           child: Text(
             '(${point.x},${point.y})',
-            style: TextStyle(
-              color: _textColor(color),
-            ),
+            style: TextStyle(color: _textColor(color)),
           ),
         ),
       ),

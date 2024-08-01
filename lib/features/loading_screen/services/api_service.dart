@@ -7,46 +7,49 @@ import 'package:webspark_test_work/features/models/post_response.dart';
 import 'http_service.dart';
 
 class ApiService {
-  final _breadthFirstSearchSearch = BreadthFirstSearch();
-  final _httpService = HttpService();
+  final BreadthFirstSearch _breadthFirstSearch = BreadthFirstSearch();
+  final HttpService _httpService = HttpService();
 
-  Future<List<PostResponse>> getResult() async {
-    GetResponseModel taskResponse = await getResponseModel();
-    List<PostResponse> results = [];
-    for (int i = 0; i < taskResponse.data.length; i++) {
-      List<String> road = _breadthFirstSearchSearch.getRoad(
-        taskResponse.data[i],
-      );
-      List<PointModel> steps = [];
-      for (int j = 0; j < road.length; j++) {
-        List<String> splitedPoint = road[j].split(',');
-        PointModel point = PointModel(
-          x: int.parse(splitedPoint[1]),
-          y: int.parse(splitedPoint[0]),
-        );
-        steps.add(point);
-      }
-      String path = '';
-      for (int j = 0; j < steps.length - 1; j++) {
-        path += '(${steps[j].x},${steps[j].y})->';
-      }
-      path += '(${steps[steps.length - 1].x},${steps[steps.length - 1].y})';
-      PostResponse fullResult = PostResponse(
-        id: taskResponse.data[i].id,
-        result: PostResult(steps: steps, path: path),
-      );
-      results.add(fullResult);
-    }
-    return results;
+  Future<List<PostResponseModel>> getResult() async {
+    final taskResponse = await getResponseModel();
+    return _processTasks(taskResponse.data);
   }
 
   Future<int> sendResult() async {
-    List<PostResponse> results = Constants.resultList;
+    final results = Constants.resultList;
     return await _httpService.postResponse(results);
   }
 
   Future<GetResponseModel> getResponseModel() async {
     final response = await _httpService.getResponse();
     return GetResponseModel.fromJson(response);
+  }
+
+  List<PostResponseModel> _processTasks(List<GetResponseDataModel> tasks) {
+    return tasks.map((task) {
+      final road = _breadthFirstSearch.getRoad(task);
+      final steps = _convertRoadToSteps(road);
+      final path = _buildPathString(steps);
+
+      return PostResponseModel(
+        id: task.id,
+        result: PostResultModel(steps: steps, path: path),
+      );
+    }).toList();
+  }
+
+  List<PointModel> _convertRoadToSteps(List<String> road) {
+    return road.map((point) {
+      final coordinates = point.split(',');
+      return PointModel(
+        x: int.parse(coordinates[1]),
+        y: int.parse(coordinates[0]),
+      );
+    }).toList();
+  }
+
+  String _buildPathString(List<PointModel> steps) {
+    final path = steps.map((step) => '(${step.x},${step.y})').join('->');
+    return path;
   }
 }

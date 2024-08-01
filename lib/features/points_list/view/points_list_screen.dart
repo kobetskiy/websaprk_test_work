@@ -17,11 +17,9 @@ class _PointsListScreenState extends State<PointsListScreen> {
       body: ListView.separated(
         itemBuilder: (context, index) => InkWell(
           onTap: () {
-            Navigator.push(
+            Constants.navigateTo(
               context,
-              MaterialPageRoute(
-                builder: (context) => PointGridViewScreen(mainIndex: index),
-              ),
+              PointGridViewScreen(mainIndex: index),
             );
           },
           child: Padding(
@@ -29,7 +27,7 @@ class _PointsListScreenState extends State<PointsListScreen> {
             child: Text(
               Constants.resultList[index].result.path,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, height: 2),
+              style: const TextStyle(fontSize: 20),
             ),
           ),
         ),

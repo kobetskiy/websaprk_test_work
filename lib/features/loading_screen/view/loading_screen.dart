@@ -39,7 +39,7 @@ class _ProgressScreenState extends State<LoadingScreen> {
               return const DataFetchingSuccessWidget();
             }
             if (state is FetchingDataFailure) {
-              return const DataFetchingFailureWidget();
+              return DataFetchingFailureWidget(error: state.error);
             }
             return const DataFetchingLoadingWidget();
           },

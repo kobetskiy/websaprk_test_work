@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webspark_test_work/features/loading_screen/bloc/send_data_bloc/send_data_bloc.dart';
+import 'package:webspark_test_work/features/models/constants.dart';
 import 'package:webspark_test_work/features/points_list/view/points_list_screen.dart';
 
 import 'export.dart';
@@ -18,17 +19,12 @@ class _DataFetchingSuccessWidgetState extends State<DataFetchingSuccessWidget> {
 
   void sendingDataResultScreen(BuildContext context, SendDataState state) {
     if (state is SendDataSuccess) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const PointsListScreen(),
-        ),
-      );
+      Constants.navigateTo(context, const PointsListScreen());
     }
     if (state is SendDataFailure) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => SendingDataFailureScreen(error: state.error),
-        ),
+      Constants.navigateTo(
+        context,
+        SendingDataFailureScreen(error: state.error),
       );
     }
   }

@@ -10,7 +10,7 @@ class HttpService {
     return jsonDecode(response.body);
   }
 
-  Future<int> postResponse(List<PostResponse> results) async {
+  Future<int> postResponse(List<PostResponseModel> results) async {
     Response response = await post(
       Uri.parse(Constants.apiUrl),
       headers: {"Content-type": "application/json"},

@@ -14,10 +14,7 @@ class _MainScreenState extends State<MainScreen> {
 
   void getPoints() {
     if (_key.currentState!.validate()) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoadingScreen()),
-      );
+      Constants.navigateTo(context, const LoadingScreen());
     }
   }
 

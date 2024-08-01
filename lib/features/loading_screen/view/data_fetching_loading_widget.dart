@@ -18,13 +18,12 @@ class _DataFetchingLoadingWidgetState extends State<DataFetchingLoadingWidget> {
   void initState() {
     super.initState();
     timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      setState(() {
-        percent += 1;
-        if (percent >= 100) {
-          timer.cancel();
-          percent = 100;
-        }
-      });
+      percent += 1;
+      if (percent >= 100) {
+        timer.cancel();
+        percent = 100;
+      }
+      setState(() {});
     });
   }
 
@@ -45,10 +44,8 @@ class _DataFetchingLoadingWidgetState extends State<DataFetchingLoadingWidget> {
           alignment: Alignment.center,
           children: [
             Center(
-                child: Text(
-              '$percent%',
-              style: const TextStyle(fontSize: 20),
-            )),
+              child: Text('$percent%', style: const TextStyle(fontSize: 20)),
+            ),
             const Center(
               child: CircularProgressIndicator(
                 strokeCap: StrokeCap.round,
