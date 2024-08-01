@@ -1,81 +1,76 @@
 import 'dart:collection';
 
+import 'package:webspark_test_work/features/models/constants.dart';
 import 'package:webspark_test_work/features/models/get_response.dart';
-import 'package:webspark_test_work/features/models/static_values.dart';
+import 'package:webspark_test_work/features/models/point.dart';
 
 class BreadthFirstSearch {
   List<String> getRoad(GetResponseDataModel responseData) {
-    String start = '${responseData.start.y},${responseData.start.x}';
-    String end = '${responseData.end.y},${responseData.end.x}';
-    List<List<String>> grid = _getGrid(responseData.field);
-    Constants.grids.add(grid);
-    HashMap<String, List<String>> gridMap = _findNeighbour(grid);
-    List<String> searched = _search(gridMap, start, end);
-    List<List<String>> roads = _getRoads(searched, gridMap);
+    final start = _pointToString(responseData.start);
+    final end = _pointToString(responseData.end);
+    final grid = _parseGrid(responseData.field);
 
-    List<String> roadReverse = [end];
-    String searchedValue = end;
-    while (searchedValue != start) {
-      for (List<String> road in roads) {
-        if (road[1] == searchedValue) {
-          roadReverse.add(road[0]);
-          searchedValue = road[0];
-          break;
-        }
-      }
-    }
+    Constants.gridList.add(grid);
 
-    return roadReverse.reversed.toList();
+    final gridMap = _mapNeighbours(grid);
+    final searchedPath = _searchPath(gridMap, start, end);
+    final roads = _constructRoads(searchedPath, gridMap);
+
+    return _traceBackPath(start, end, roads);
   }
 
-  HashMap<String, List<String>> _findNeighbour(List<List<String>> grid) {
-    HashMap<String, List<String>> gridMap = HashMap();
+  String _pointToString(PointModel point) {
+    return '${point.y},${point.x}';
+  }
+
+  List<List<String>> _parseGrid(List<String> field) {
+    return field.map((row) => row.split('')).toList();
+  }
+
+  HashMap<String, List<String>> _mapNeighbours(List<List<String>> grid) {
+    final HashMap<String, List<String>> gridMap = HashMap();
+
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
         if (grid[i][j] == '.') {
-          List<String> neighbours = [];
-
-          if (i > 0 && grid[i - 1][j] == '.') {
-            neighbours.add('${i - 1},$j');
-          }
-          if (i < grid.length - 1 && grid[i + 1][j] == '.') {
-            neighbours.add('${i + 1},$j');
-          }
-          if (j > 0 && grid[i][j - 1] == '.') {
-            neighbours.add('$i,${j - 1}');
-          }
-          if (j < grid[i].length - 1 && grid[i][j + 1] == '.') {
-            neighbours.add('$i,${j + 1}');
-          }
-          if (i > 0 && j > 0 && grid[i - 1][j - 1] == '.') {
-            neighbours.add('${i - 1},${j - 1}');
-          }
-          if (i > 0 && j < grid[i].length - 1 && grid[i - 1][j + 1] == '.') {
-            neighbours.add('${i - 1},${j + 1}');
-          }
-          if (i < grid.length - 1 && j > 0 && grid[i + 1][j - 1] == '.') {
-            neighbours.add('${i + 1},${j - 1}');
-          }
-          if (i < grid.length - 1 &&
-              j < grid[i].length - 1 &&
-              grid[i + 1][j + 1] == '.') {
-            neighbours.add('${i + 1},${j + 1}');
-          }
-          gridMap["$i,$j"] = neighbours;
+          gridMap['$i,$j'] = _findNeighbours(i, j, grid);
         }
       }
     }
     return gridMap;
   }
 
-  List<String> _search(
-      HashMap<String, List<String>> gridMap, String start, String end) {
+  List<String> _findNeighbours(int i, int j, List<List<String>> grid) {
+    final List<String> neighbours = [];
+
+    final directions = [
+      [0, 1], [1, 0], [0, -1], [-1, 0],
+      [-1, -1], [-1, 1], [1, -1], [1, 1]
+    ];
+
+    for (final direction in directions) {
+      final int newX = i + direction[0];
+      final int newY = j + direction[1];
+      if (_isValid(newX, newY, grid)) {
+        neighbours.add('$newX,$newY');
+      }
+    }
+
+    return neighbours;
+  }
+
+  bool _isValid(int x, int y, List<List<String>> grid) {
+    return x >= 0 && y >= 0 && x < grid.length && y < grid[x].length && grid[x][y] == '.';
+  }
+
+  List<String> _searchPath(HashMap<String, List<String>> gridMap, String start, String end) {
     if (start == end) return [start];
-    Queue<String> searchQueue = Queue.from(gridMap[start]!);
-    Set<String> searched = {start};
+
+    final Queue<String> searchQueue = Queue.from(gridMap[start]!);
+    final Set<String> searched = {start};
 
     while (searchQueue.isNotEmpty) {
-      String current = searchQueue.removeFirst();
+      final current = searchQueue.removeFirst();
       if (!searched.contains(current)) {
         searched.add(current);
         if (current == end) return searched.toList();
@@ -85,12 +80,11 @@ class BreadthFirstSearch {
     return [];
   }
 
-  List<List<String>> _getRoads(
-      List<String> searched, HashMap<String, List<String>> gridMap) {
-    List<List<String>> roads = [];
+  List<List<String>> _constructRoads(List<String> searched, HashMap<String, List<String>> gridMap) {
+    final List<List<String>> roads = [];
 
-    for (String point in searched) {
-      for (String neighbour in gridMap[point]!) {
+    for (final point in searched) {
+      for (final neighbour in gridMap[point]!) {
         if (searched.contains(neighbour)) {
           roads.add([point, neighbour]);
         }
@@ -99,7 +93,20 @@ class BreadthFirstSearch {
     return roads;
   }
 
-  List<List<String>> _getGrid(List<String> field) {
-    return field.map((row) => row.split('')).toList();
+  List<String> _traceBackPath(String start, String end, List<List<String>> roads) {
+    final List<String> roadReverse = [end];
+    String current = end;
+
+    while (current != start) {
+      for (final road in roads) {
+        if (road[1] == current) {
+          roadReverse.add(road[0]);
+          current = road[0];
+          break;
+        }
+      }
+    }
+
+    return roadReverse.reversed.toList();
   }
 }

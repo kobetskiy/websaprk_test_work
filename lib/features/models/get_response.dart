@@ -47,13 +47,14 @@ class GetResponseDataModel {
   final PointModel start;
   final PointModel end;
 
-  factory GetResponseDataModel.fromJson(Map<String, dynamic> json) =>
-      GetResponseDataModel(
-        id: json["id"],
-        field: List<String>.from(json["field"].map((x) => x)),
-        start: PointModel.fromJson(json["start"]),
-        end: PointModel.fromJson(json["end"]),
-      );
+  factory GetResponseDataModel.fromJson(Map<String, dynamic> json) {
+    return GetResponseDataModel(
+      id: json["id"],
+      field: List<String>.from(json["field"].map((x) => x)),
+      start: PointModel.fromJson(json["start"]),
+      end: PointModel.fromJson(json["end"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,

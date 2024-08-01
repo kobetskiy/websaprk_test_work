@@ -1,8 +1,8 @@
 import 'package:webspark_test_work/features/loading_screen/services/breadth_first_search.dart';
+import 'package:webspark_test_work/features/models/constants.dart';
 import 'package:webspark_test_work/features/models/get_response.dart';
 import 'package:webspark_test_work/features/models/point.dart';
 import 'package:webspark_test_work/features/models/post_response.dart';
-import 'package:webspark_test_work/features/models/static_values.dart';
 
 import 'http_service.dart';
 
@@ -10,8 +10,8 @@ class ApiService {
   final _breadthFirstSearchSearch = BreadthFirstSearch();
   final _httpService = HttpService();
 
-  Future<List<PostResponse>> getResults() async {
-    GetResponseModel taskResponse = await getTaskResponse();
+  Future<List<PostResponse>> getResult() async {
+    GetResponseModel taskResponse = await getResponseModel();
     List<PostResponse> results = [];
     for (int i = 0; i < taskResponse.data.length; i++) {
       List<String> road = _breadthFirstSearchSearch.getRoad(
@@ -40,13 +40,13 @@ class ApiService {
     return results;
   }
 
-  Future<int> sendResults() async {
-    List<PostResponse> results = Constants.results;
+  Future<int> sendResult() async {
+    List<PostResponse> results = Constants.resultList;
     return await _httpService.postResponse(results);
   }
 
-  Future<GetResponseModel> getTaskResponse() async {
-    final response = await _httpService.getResponseBody();
+  Future<GetResponseModel> getResponseModel() async {
+    final response = await _httpService.getResponse();
     return GetResponseModel.fromJson(response);
   }
 }

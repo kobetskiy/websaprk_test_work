@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webspark_test_work/features/loading_screen/view/loading_screen.dart';
-import 'package:webspark_test_work/features/models/static_values.dart';
+import 'package:webspark_test_work/features/models/constants.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -10,17 +10,10 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final urlTextController = TextEditingController(text: Constants.url);
+  final urlTextController = TextEditingController(text: Constants.apiUrl);
 
-  void startCountingProcess() {
-    if (urlTextController.text != Constants.url) {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-          title: Text('Url is not valid'),
-        ),
-      );
-    } else {
+  void getPoints() {
+    if (_key.currentState!.validate()) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoadingScreen()),
@@ -28,10 +21,21 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  final _key = GlobalKey<FormState>();
+
+  String? validateURL(String? value) {
+    if (value!.trim().isEmpty) {
+      return "Enter URL";
+    } else if (value != Constants.apiUrl) {
+      return "Enter a valid URL";
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home screen')),
+      appBar: AppBar(title: const Text('Home Screen')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -39,13 +43,16 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             const Text('Set valid API base URL in order to continue'),
             const SizedBox(height: 20),
-            TextField(
-              controller: urlTextController,
-              decoration: const InputDecoration(
-                labelText: "API URL",
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 20),
-
+            Form(
+              key: _key,
+              child: TextFormField(
+                controller: urlTextController,
+                decoration: const InputDecoration(
+                  labelText: "API URL",
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                ),
+                validator: validateURL,
               ),
             )
           ],
@@ -56,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
         width: 300,
         height: 50,
         child: ElevatedButton(
-          onPressed: startCountingProcess,
+          onPressed: getPoints,
           child: const Center(
             child: Text('Start counting process'),
           ),

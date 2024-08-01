@@ -17,7 +17,7 @@ class _DataFetchingLoadingWidgetState extends State<DataFetchingLoadingWidget> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(milliseconds: 50), (_) {
+    timer = Timer.periodic(const Duration(milliseconds: 100), (_) {
       setState(() {
         percent += 1;
         if (percent >= 100) {
@@ -40,13 +40,24 @@ class _DataFetchingLoadingWidgetState extends State<DataFetchingLoadingWidget> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Center(child: Text('Fetching data from the server...')),
-        Center(child: Text('$percent%')),
         const SizedBox(height: 40),
-        const CircularProgressIndicator(
-          strokeCap: StrokeCap.round,
-          strokeWidth: 6,
-          strokeAlign: 7,
-        )
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Center(
+                child: Text(
+              '$percent%',
+              style: const TextStyle(fontSize: 20),
+            )),
+            const Center(
+              child: CircularProgressIndicator(
+                strokeCap: StrokeCap.round,
+                strokeWidth: 6,
+                strokeAlign: 7,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

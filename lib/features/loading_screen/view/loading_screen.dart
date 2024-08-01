@@ -21,16 +21,22 @@ class _ProgressScreenState extends State<LoadingScreen> {
   }
 
   @override
+  void dispose() {
+    _fetchingDataBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home screen')),
+      appBar: AppBar(title: const Text('Load points')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: BlocBuilder(
           bloc: _fetchingDataBloc,
           builder: (context, state) {
             if (state is FetchingDataSuccess) {
-              return DataFetchingSuccessWidget(state: state);
+              return const DataFetchingSuccessWidget();
             }
             if (state is FetchingDataFailure) {
               return const DataFetchingFailureWidget();
